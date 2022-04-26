@@ -49,7 +49,6 @@ try {
             $_SESSION['searching-result'] = $businessCardCrud->searchByFields($businessCardValues);
         } else {
             $businessCard = new BusinessCard(
-                $businessCardCrud,
                 $businessCardValues[NAME_FIELD]?? "",
                 $businessCardValues[SURNAME_FIELD]?? "",
                 $businessCardValues[EMAIL_FIELD]?? "",
@@ -59,7 +58,7 @@ try {
                 $businessCardValues[HIRED_FIELD]?? false,
             );
 
-            $businessCard->save();
+            $businessCardCrud->add($businessCard);
         }
 
         header("Location: ../");
