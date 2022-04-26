@@ -1,7 +1,7 @@
 <?php
 
-require_once (__DIR__ . '/../config/config.local.php');
-require_once (__DIR__ . '/BusinessCard.php');
+require_once(__DIR__ . '/../config/config.local.php');
+require_once(__DIR__ . '/BusinessCard.php');
 
 class BusinessCardMySQLCRUD
 {
@@ -28,7 +28,7 @@ class BusinessCardMySQLCRUD
     /**
      * @throws Exception
      */
-    public function add(BusinessCard $businessCard): bool
+    public function add(BusinessCard $businessCard): int
     {
         try {
             $sql = sprintf(
@@ -44,11 +44,32 @@ class BusinessCardMySQLCRUD
             );
 
             $this->dbHandler->query($sql);
+
+            return $this->dbHandler->insert_id;
+
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Cannot add record to MySQL table:" . $e->getMessage());
         }
+    }
 
-        return true;
+    /**
+     * @throws Exception
+     */
+    public function searchByID(int $ID): array
+    {
+        $result = [];
+
+        try {
+            $sql = sprintf("SELECT * FROM %s WHERE id=%d", BusinessCard::getTableName(), $ID);
+            $queryResult = $this->dbHandler->query($sql);
+            if ($queryResult->num_rows == 1) {
+                $result[] = $queryResult->fetch_assoc();
+            }
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Cannot find the record in MySQL table:" . $e->getMessage());
+        }
+
+        return $result;
     }
 
     /**
@@ -58,13 +79,9 @@ class BusinessCardMySQLCRUD
     {
         $result = [];
 
-        if (empty($fields)){
-            return $result;
-        }
-
         try {
             $sql = sprintf("SELECT * FROM %s WHERE ", BusinessCard::getTableName());
-            foreach ($fields as $field =>$value) {
+            foreach ($fields as $field => $value) {
                 if (strlen($value) > 0) {
                     if ($field == "hired") {
                         $sql .= sprintf(" %s = %d AND", $field, $value);
@@ -74,15 +91,15 @@ class BusinessCardMySQLCRUD
                 }
             }
 
-            $sql = rtrim($sql," AND");
+            $sql = rtrim($sql, " AND");
             $queryResult = $this->dbHandler->query($sql);
             if ($queryResult->num_rows > 0) {
-                while($row = $queryResult->fetch_assoc()) {
+                while ($row = $queryResult->fetch_assoc()) {
                     $result[] = $row;
                 }
             }
         } catch (mysqli_sql_exception $e) {
-            throw new Exception("Cannot find the record in MySQL table:" . $e->getMessage());
+            throw new Exception("Cannot find the records in MySQL table:" . $e->getMessage());
         }
 
         return $result;
@@ -100,16 +117,14 @@ class BusinessCardMySQLCRUD
             );
             $queryResult = $this->dbHandler->query($sql);
             if ($queryResult->num_rows > 0) {
-                while($row = $queryResult->fetch_assoc()) {
+                while ($row = $queryResult->fetch_assoc()) {
                     $result[] = $row;
                 }
             }
         } catch (mysqli_sql_exception $e) {
-            throw new Exception("Cannot find the record in MySQL table:" . $e->getMessage());
+            throw new Exception("Cannot find the records in MySQL table:" . $e->getMessage());
         }
 
         return $result;
     }
-
-
 }

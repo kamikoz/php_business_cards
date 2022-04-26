@@ -1,7 +1,8 @@
-<?php if (session_status() == PHP_SESSION_NONE) session_start(); unset($_SESSION['form-type'])?>
-
+<div class="mt-4 mb-4">
+    <h3 class="text-center">Search in Business Cards:</h3>
+</div>
 <div class="row d-flex align-items-start justify-content-center ">
-    <form class="col-md-4 mt-3" method="POST" action="./app/CreateBusinessCardPOST.php">
+    <form class="col-md-4 mt-3" method="POST" action="">
         <div class="form-group">
             <label>Name</label>
             <input type="text" minlength="3" class="form-control" name="name">
@@ -26,12 +27,25 @@
             <label>Position</label>
             <input type="text" minlength="3" class="form-control" name="position">
         </div>
-        <div class="form-check">
-            <input type="checkbox" class="form-check-input" value="hired" name="hired">
-            <label class="form-check-label">Check if this person is currently employed</label>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="hired" value="true" id="flexRadioDefault1">
+                <label class="form-check-label" for="flexRadioDefault1">
+                    Employed
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="hired" value="false" id="flexRadioDefault2" checked>
+                <label class="form-check-label" for="flexRadioDefault2">
+                    No employed
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="hidden" value="<?php echo BusinessCardService::SEARCHING_METHOD_FORM ?>" name="<?php echo BusinessCardService::SEARCHING_METHOD_FORM ?>">
         </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            <button type="submit" class="btn btn-primary mt-3">Search</button>
         </div>
     </form>
 </div>
