@@ -34,7 +34,7 @@ try {
             $input = validateInput($input);
             $businessCardValues[$fieldName] = $input;
 
-            if (!isset($_SESSION['form-type'])){
+            if (!isset($_SESSION['form-type']) || ($_SESSION['form-type'] !== "searching")){
                 if($fieldName !== HIRED_FIELD && strlen($businessCardValues[$fieldName]) == 0) {
                     throw new Exception("No field can be empty during adding a new business card!", 875);
                 }
