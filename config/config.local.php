@@ -1,7 +1,8 @@
 <?php
 
 //Database params
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'business_cards');
+const DB_HOST = 'localhost';
+const DB_USER = 'root';
+const DB_PASS = '';
+const DB_NAME = 'business_cards';
+const DB_TABLE_NAME = 'business_card';
