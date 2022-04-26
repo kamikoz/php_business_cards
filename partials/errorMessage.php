@@ -1,4 +1,6 @@
 <?php
+require_once (__DIR__ . "/../config/config.local.php");
+
 $errorMessage= $GLOBALS['errorMessage'] ?? "";
 $errorCode= $GLOBALS['errorCode'] ?? 0;
 ?>
@@ -8,7 +10,7 @@ $errorCode= $GLOBALS['errorCode'] ?? 0;
         Something went wrong, please try again!
     </div>
 <?php endif; ?>
-<?php if ($errorCode === 875): ?>
+<?php if ($errorCode === SEARCHING_ERROR_NO_EMPTY): ?>
     <div class="alert alert-warning" role="alert">
         <?php echo $errorMessage ?>
     </div>

@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/BusinessCardMySQLCRUD.php');
+require_once(__DIR__ . '/../config/config.local.php');
 
 session_start();
 
@@ -34,9 +35,9 @@ try {
             $input = validateInput($input);
             $businessCardValues[$fieldName] = $input;
 
-            if (!isset($_SESSION['form-type']) || ($_SESSION['form-type'] !== "searching")){
+            if (!isset($_SESSION['form-type']) || ($_SESSION['form-type'] !== SEARCHING_METHOD_NAME)){
                 if($fieldName !== HIRED_FIELD && strlen($businessCardValues[$fieldName]) == 0) {
-                    throw new Exception("No field can be empty during adding a new business card!", 875);
+                    throw new Exception("No field can be empty during adding a new business card!", SEARCHING_ERROR_NO_EMPTY);
                 }
             }
         }
@@ -45,7 +46,7 @@ try {
             $businessCardValues[HIRED_FIELD] = 1;
         }
 
-        if (isset($_SESSION['form-type']) && $_SESSION['form-type'] == "searching") {
+        if (isset($_SESSION['form-type']) && $_SESSION['form-type'] == SEARCHING_METHOD_NAME) {
             $_SESSION['searching-result'] = $businessCardCrud->searchByFields($businessCardValues);
         } else {
             $businessCard = new BusinessCard(
@@ -62,12 +63,14 @@ try {
         }
 
         header("Location: ../");
+        die();
 
     }
 } catch (Exception $e) {
     $_SESSION['error_message'] = $e->getMessage();
     $_SESSION['error_code'] = $e->getCode();
     header("Location: ../");
+    die();
 }
 
 function validateInput($data): string
