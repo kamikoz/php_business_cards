@@ -2,7 +2,6 @@
 require_once(__DIR__ . '/app/BusinessCardMySQLCRUD.php');
 
 session_start();
-$dataBaseError = "";
 ?>
 
 <?php include_once "./partials/header.php" ?>
