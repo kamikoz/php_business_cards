@@ -31,7 +31,7 @@ class HomeController
         try {
             $this->businessCardService = new BusinessCardService(new BusinessCardMySQLCRUD());
         } catch (Exception $e) {
-            $this->view = ["view/error_message.php"];
+            $this->view[] = "view/error_message.php";
             $this->errorMessage = $e->getMessage();
             $this->errorCode = $e->getCode();
         }
