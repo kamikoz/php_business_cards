@@ -1,12 +1,16 @@
 <?php
-require_once(__DIR__ . "/BusinessCardMySQLCRUD.php");
+require_once(__DIR__ . "/BusinessCardPOSTValidator.php");
+require_once(__DIR__ . "/BusinessCardHydrator.php");
+require_once(__DIR__ . "/BusinessCardMySQLRepository.php");
 require_once(__DIR__ . "/BusinessCardService.php");
 
 class HomeController
 {
     private string $action;
     private string $postAction;
+    private BusinessCardPOSTValidator $businessCardPOSTValidator;
     private BusinessCardService $businessCardService;
+    private BusinessCardHydrator $businessCardHydrator;
     private string $errorMessage;
     private int $errorCode;
     private array $view;
@@ -25,11 +29,13 @@ class HomeController
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $this->action = "post";
-            $this->postAction = filter_input(INPUT_POST, BusinessCardService::SEARCHING_METHOD_FORM, FILTER_DEFAULT) ?? "";
+            $this->postAction = filter_input(INPUT_POST, SEARCHING_METHOD_FORM, FILTER_DEFAULT) ?? "";
         }
 
         try {
-            $this->businessCardService = new BusinessCardService(new BusinessCardMySQLCRUD());
+            $this->businessCardPOSTValidator = new BusinessCardPOSTValidator($_POST?? []);
+            $this->businessCardService = new BusinessCardService(new BusinessCardMySQLRepository());
+            $this->businessCardHydrator = new BusinessCardHydrator();
         } catch (Exception $e) {
             $this->view[] = "view/error_message.php";
             $this->errorMessage = $e->getMessage();
@@ -48,16 +54,18 @@ class HomeController
                 break;
             case 'post':
                 try {
-                    if ($this->postAction === BusinessCardService::SEARCHING_METHOD_FORM) {
-                        $this->businessCards = $this->businessCardService->searchBusinessCardsByFieldsFromPOST();
+                    $dataPOST = $this->businessCardPOSTValidator->validatePOSTData($this->postAction === SEARCHING_METHOD_FORM);
+                    if ($this->postAction === SEARCHING_METHOD_FORM) {
+                        $this->businessCards = $this->businessCardService->searchBusinessCardsByFields($dataPOST);
                     } else {
-                        $businessCardID = $this->businessCardService->saveBusinessCardFromPOST();
+                        $businessCard = $this->businessCardHydrator->hydrate($dataPOST, new BusinessCard());
+                        $businessCardID = $this->businessCardService->saveBusinessCard($businessCard);
                         $this->businessCards = $this->businessCardService->searchBusinessCardByID($businessCardID);
                     }
                     $this->view[] = "view/business_cards_list.php";
                 } catch (Exception $e) {
                     $this->view[] = "view/error_message.php";
-                    if ($this->postAction === BusinessCardService::SEARCHING_METHOD_FORM) {
+                    if ($this->postAction === SEARCHING_METHOD_FORM) {
                         $this->view[] = "view/form_search.php";
                     } else {
                         $this->view[] = "view/form_add.php";

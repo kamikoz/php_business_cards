@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="form-group">
-            <input type="hidden" value="<?php echo BusinessCardService::SEARCHING_METHOD_FORM ?>" name="<?php echo BusinessCardService::SEARCHING_METHOD_FORM ?>">
+            <input type="hidden" value="<?php echo SEARCHING_METHOD_FORM ?>" name="<?php echo SEARCHING_METHOD_FORM ?>">
         </div>
         <div class="text-center">
             <button type="submit" class="btn btn-primary mt-3">Search</button>

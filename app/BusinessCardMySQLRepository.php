@@ -2,8 +2,9 @@
 
 require_once(__DIR__ . '/../config/config.local.php');
 require_once(__DIR__ . '/BusinessCard.php');
+require_once(__DIR__ . '/BusinessCardRepository.php');
 
-class BusinessCardMySQLCRUD
+class BusinessCardMySQLRepository implements BusinessCardRepository
 {
     private string $dbHost = DB_HOST;
     private string $dbUser = DB_USER;
