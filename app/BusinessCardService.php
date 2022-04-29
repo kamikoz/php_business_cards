@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 require_once(__DIR__ . '/BusinessCardConsts.php');
 require_once(__DIR__ . '/BusinessCardMySQLRepository.php');
 require_once(__DIR__ . '/../config/config.local.php');

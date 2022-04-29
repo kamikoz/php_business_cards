@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 class BusinessCard
 {
@@ -20,7 +21,7 @@ class BusinessCard
         $this->phoneNumber = "";
         $this->company = "";
         $this->position = "";
-        $this->hired = "";
+        $this->hired = false;
     }
 
     /**
