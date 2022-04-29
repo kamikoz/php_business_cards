@@ -1,3 +1,3 @@
 # php_business_cards
 
-Clear PHP 8.1 + MVC + OOP Basic Project
+Basic Project: Pure PHP 8.1 + MVC + OOP
