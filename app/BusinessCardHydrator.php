@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 class BusinessCardHydrator
 {
-    protected ReflectionClass $reflector;
+    private ReflectionClass $reflector;
 
     const STRING_TO_DATE_METHOD_NAME = "stringToDateTime";
     const STRATEGIES = [
