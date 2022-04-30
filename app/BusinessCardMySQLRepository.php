@@ -80,11 +80,10 @@ class BusinessCardMySQLRepository implements BusinessCardRepository
     public function searchByFields(array $fields): array
     {
         $result = [];
-
         try {
             $sql = sprintf("SELECT * FROM %s WHERE ", BusinessCard::getTableName());
             foreach ($fields as $field => $value) {
-                if (strlen($value) > 0) {
+                if ($value !== "") {
                     if ($field == "hired") {
                         $sql .= sprintf(" %s = %d AND", $field, $value);
                     } else {

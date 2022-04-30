@@ -5,23 +5,14 @@ require_once(__DIR__ . "/BusinessCardConsts.php");
 
 class BusinessCardPOSTValidator
 {
-    private array $POST_DATA;
-    private array $businessCardValues = [
-        NAME_FIELD => "",
-        SURNAME_FIELD => "",
-        EMAIL_FIELD => "",
-        PHONE_NUMBER_FIELD => "",
-        COMPANY_FIELD => "",
-        POSITION_FIELD => "",
-        HIRED_FIELD => 0,
-    ];
+    private array $dataPost;
 
     /**
-     * @param array $POST_DATA
+     * @param array $dataPost
      */
-    public function __construct(array $POST_DATA)
+    public function __construct(array $dataPost)
     {
-        $this->POST_DATA = $POST_DATA;
+        $this->dataPost = $dataPost;
     }
 
     /**
@@ -29,50 +20,64 @@ class BusinessCardPOSTValidator
      */
     public function validatePOSTData(bool $isSearchingMode): array
     {
-        foreach ($this->businessCardValues as $fieldName => $fieldValue) {
-            if ($fieldName == EMAIL_FIELD) {
-                $filter = FILTER_VALIDATE_EMAIL;
+        $businessCardValues = [
+            NAME_FIELD => "",
+            SURNAME_FIELD => "",
+            EMAIL_FIELD => "",
+            PHONE_NUMBER_FIELD => "",
+            COMPANY_FIELD => "",
+            POSITION_FIELD => "",
+            HIRED_FIELD => 0,
+        ];
+
+        foreach ($businessCardValues as $fieldName => $fieldValue) {
+            $data = $this->dataPost[$fieldName] ?? "";
+
+            if ($fieldName !== HIRED_FIELD) {
+                $data = trim($data);
+                $data = stripslashes($data);
+                $data = htmlspecialchars($data);
             } else {
-                $filter = FILTER_DEFAULT;
-            }
-
-            $data = $this->POST_DATA[$fieldName] ?? "";
-            $data = filter_var($data, $filter);
-            $data = trim($data);
-            $data = stripslashes($data);
-            $data = htmlspecialchars($data);
-
-            if ($fieldName === HIRED_FIELD ) {
-                $data = $data==="true"? 1:0;
+                if ($data === "true") {
+                    $data = true;
+                }
             }
 
             if (!$isSearchingMode && ($fieldName !== HIRED_FIELD && strlen($data) == 0)) {
-                throw new Exception("No field can be empty during adding a new business card!", SEARCHING_ERROR_EMPTY_FIELD);
+                throw new Exception("No field can be empty during adding a new business card!", FORM_ERROR_EMPTY_FIELD);
             }
 
-            $this->businessCardValues[$fieldName] = $data;
+            if ($fieldName === EMAIL_FIELD) {
+                $data = filter_var($data, FILTER_VALIDATE_EMAIL);
+                if ($data === false && $isSearchingMode && $this->dataPost[EMAIL_FIELD] === "") {
+                    $data = "";
+                } else if ($data === false) {
+                    throw new Exception("This is not valid e-mail!", FORM_ERROR_NO_VALID_EMAIL);
+                }
+            }
+
+            $businessCardValues[$fieldName] = $data;
         }
 
-
-        if ($isSearchingMode && $this->checkIfAllArrayKeysHaveEmptyValues($this->businessCardValues)) {
-            throw new Exception("All fields cannot be empty during searching a business cards!", SEARCHING_ERROR_EMPTY_FIELD);
+        $businessCardValues = $this->removeEmptyValuesFromArray($businessCardValues);
+        if (empty($businessCardValues)) {
+            throw new Exception("All fields cannot be empty during searching a business cards!", FORM_ERROR_EMPTY_FIELD);
         }
 
-        return $this->businessCardValues;
+       return $businessCardValues;
     }
 
     /**
      * @param array $array
-     * @return bool
+     * @return array
      */
-
-    private function checkIfAllArrayKeysHaveEmptyValues(array $array): bool
+    private function removeEmptyValuesFromArray(array $array): array
     {
-        foreach ($array as $value) {
-            if ($value !== "") {
-                return false;
+        foreach ($array as $key => $value) {
+            if ($value === "") {
+                unset($array[$key]);
             }
         }
-        return true;
+        return $array;
     }
 }
